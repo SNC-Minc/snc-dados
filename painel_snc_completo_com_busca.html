@@ -456,7 +456,9 @@
             }
         }
 
-        // Gráficos
+        // Configurar Chart.js para mostrar números
+        Chart.register(ChartDataLabels);
+
         const chartOptions = {
             responsive: true,
             maintainAspectRatio: true,
@@ -464,14 +466,19 @@
                 legend: {
                     position: 'bottom',
                     labels: {
-                        font: { size: 12 },
-                        padding: 15
+                        font: { size: 14, weight: 'bold' },
+                        padding: 20,
+                        color: '#333'
                     }
                 },
                 datalabels: {
                     color: '#fff',
-                    font: { weight: 'bold', size: 12 },
-                    formatter: (value) => value
+                    font: { weight: 'bold', size: 16 },
+                    formatter: (value, context) => {
+                        return value;
+                    },
+                    anchor: 'center',
+                    align: 'center'
                 }
             }
         };
