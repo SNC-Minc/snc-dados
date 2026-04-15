@@ -479,10 +479,6 @@
 
                 <div class="charts-grid">
                     <div class="chart-container">
-                        <div class="chart-title">Adesão ao SNC</div>
-                        <canvas id="chartAdesao"></canvas>
-                    </div>
-                    <div class="chart-container">
                         <div class="chart-title">Plano de Cultura</div>
                         <canvas id="chartPlano"></canvas>
                     </div>
@@ -733,24 +729,10 @@
         };
 
         // Gráficos principais
-        new Chart(document.getElementById('chartAdesao'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Com Adesão', 'Sem Adesão'],
-                datasets: [{
-                    data: [3873, 1709],
-                    backgroundColor: ['#11998e', '#f5576c'],
-                    borderColor: '#fff',
-                    borderWidth: 2
-                }]
-            },
-            options: chartOptions
-        });
-
         new Chart(document.getElementById('chartPlano'), {
             type: 'doughnut',
             data: {
-                labels: ['Com Plano', 'Sem Plano'],
+                labels: ['Com Plano', 'Não informado'],
                 datasets: [{
                     data: [758, 4839],
                     backgroundColor: ['#38ef7d', '#e74c3c'],
@@ -764,7 +746,7 @@
         new Chart(document.getElementById('chartFundo'), {
             type: 'doughnut',
             data: {
-                labels: ['Com Fundo', 'Sem Fundo'],
+                labels: ['Com Fundo', 'Não informado'],
                 datasets: [{
                     data: [1557, 4040],
                     backgroundColor: ['#3498db', '#e74c3c'],
@@ -778,7 +760,7 @@
         new Chart(document.getElementById('chartConselho'), {
             type: 'doughnut',
             data: {
-                labels: ['Com Conselho', 'Sem Conselho'],
+                labels: ['Com Conselho', 'Não informado'],
                 datasets: [{
                     data: [1595, 4002],
                     backgroundColor: ['#9b59b6', '#e74c3c'],
@@ -790,13 +772,14 @@
         });
 
         new Chart(document.getElementById('chartOrgao'), {
-            type: 'doughnut',
+            type: 'bar',
             data: {
-                labels: ['Com Órgão', 'Sem Órgão'],
+                labels: ['Com Órgão', 'Não informado'],
                 datasets: [{
+                    label: 'Órgão Gestor',
                     data: [1315, 4282],
                     backgroundColor: ['#f39c12', '#e74c3c'],
-                    borderColor: '#fff',
+                    borderColor: '#f39c12',
                     borderWidth: 2
                 }]
             },
@@ -804,13 +787,14 @@
         });
 
         new Chart(document.getElementById('chartLeiSistema'), {
-            type: 'doughnut',
+            type: 'bar',
             data: {
-                labels: ['Com Lei', 'Sem Lei'],
+                labels: ['Com Lei', 'Não informado'],
                 datasets: [{
+                    label: 'Lei do Sistema',
                     data: [1578, 4019],
                     backgroundColor: ['#1abc9c', '#e74c3c'],
-                    borderColor: '#fff',
+                    borderColor: '#1abc9c',
                     borderWidth: 2
                 }]
             },
