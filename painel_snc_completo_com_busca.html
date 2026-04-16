@@ -1222,25 +1222,33 @@
                     return 'status-nao-informado';
                 }
 
+                // Função para trocar Nao possui adesão por Não informado
+                function formatarStatus(status) {
+                    if (status.toLowerCase().includes('nao possui')) {
+                        return 'Não informado';
+                    }
+                    return status;
+                }
+
                 // Preencher componentes
                 const planoEl = document.getElementById('status-plano');
-                planoEl.textContent = dados.plano;
+                planoEl.textContent = formatarStatus(dados.plano);
                 planoEl.className = 'componente-status ' + getStatusClass(dados.plano);
 
                 const fundoEl = document.getElementById('status-fundo');
-                fundoEl.textContent = dados.fundo;
+                fundoEl.textContent = formatarStatus(dados.fundo);
                 fundoEl.className = 'componente-status ' + getStatusClass(dados.fundo);
 
                 const conselhoEl = document.getElementById('status-conselho');
-                conselhoEl.textContent = dados.conselho;
+                conselhoEl.textContent = formatarStatus(dados.conselho);
                 conselhoEl.className = 'componente-status ' + getStatusClass(dados.conselho);
 
                 const orgaoEl = document.getElementById('status-orgao');
-                orgaoEl.textContent = dados.orgao;
+                orgaoEl.textContent = formatarStatus(dados.orgao);
                 orgaoEl.className = 'componente-status ' + getStatusClass(dados.orgao);
 
                 const leiEl = document.getElementById('status-lei');
-                leiEl.textContent = dados.lei_sistema;
+                leiEl.textContent = formatarStatus(dados.lei_sistema);
                 leiEl.className = 'componente-status ' + getStatusClass(dados.lei_sistema);
 
                 // Mostrar o card de relatório
