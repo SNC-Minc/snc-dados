@@ -1202,7 +1202,12 @@
                 document.getElementById('relatorioMunicipio_nome').textContent = dados.municipio;
                 document.getElementById('relatorioMunicipio_uf').textContent = dados.uf;
                 document.getElementById('relatorioMunicipio_regiao').textContent = dados.regiao;
-                document.getElementById('relatorioMunicipio_adesao').textContent = dados.adesao;
+                // Trocar "Não possui adesão" por "Não informado"
+                let adesaoTexto = dados.adesao;
+                if (adesaoTexto.toLowerCase().includes('não possui')) {
+                    adesaoTexto = 'Não informado';
+                }
+                document.getElementById('relatorioMunicipio_adesao').textContent = adesaoTexto;
 
                 // Função para obter classe CSS do status
                 function getStatusClass(status) {
