@@ -244,6 +244,120 @@
             background: #764ba2;
         }
 
+        .relatorio-municipio {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 25px;
+            border: 2px solid #667eea;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .relatorio-municipio.ativo {
+            display: block;
+        }
+
+        .relatorio-municipio h3 {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .relatorio-municipio-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-item-label {
+            font-size: 0.85em;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .info-item-value {
+            font-size: 1.1em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .componentes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .componente-card {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .componente-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .componente-nome {
+            font-size: 0.85em;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .componente-status {
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            font-weight: 600;
+            color: white;
+            word-wrap: break-word;
+        }
+
+        .status-concluida {
+            background: #11998e;
+        }
+
+        .status-nao-informado {
+            background: #e74c3c;
+        }
+
+        .status-arquivo-incorreto {
+            background: #f39c12;
+        }
+
+        .status-arquivo-incompleto {
+            background: #e67e22;
+        }
+
+        .status-avaliando {
+            background: #3498db;
+        }
+
+        .status-em-preenchimento {
+            background: #9b59b6;
+        }
+
+        .status-nao-possui {
+            background: #95a5a6;
+        }
+
         .adesoes-section {
             background: #f8f9fa;
             padding: 25px;
@@ -821,6 +935,54 @@
                     <div id="municipiosList" style="display: none; margin-top: 15px;"></div>
                 </div>
 
+                <!-- CARD DE RELATÓRIO DO MUNICÍPIO -->
+                <div id="relatorioMunicipio" class="relatorio-municipio">
+                    <h3 id="relatorioTitulo">📋 Relatório do Município</h3>
+                    
+                    <div class="relatorio-municipio-info">
+                        <div class="info-item">
+                            <div class="info-item-label">Município</div>
+                            <div class="info-item-value" id="relatorioMunicipio_nome">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-item-label">Estado</div>
+                            <div class="info-item-value" id="relatorioMunicipio_uf">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-item-label">Região</div>
+                            <div class="info-item-value" id="relatorioMunicipio_regiao">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-item-label">Adesão ao SNC</div>
+                            <div class="info-item-value" id="relatorioMunicipio_adesao">-</div>
+                        </div>
+                    </div>
+
+                    <h4 style="font-size: 1.2em; color: #333; margin-bottom: 15px; margin-top: 20px;">🎯 Componentes do SNC</h4>
+                    <div class="componentes-grid">
+                        <div class="componente-card">
+                            <div class="componente-nome">📋 Plano de Cultura</div>
+                            <div class="componente-status" id="status-plano">-</div>
+                        </div>
+                        <div class="componente-card">
+                            <div class="componente-nome">💰 Fundo de Cultura</div>
+                            <div class="componente-status" id="status-fundo">-</div>
+                        </div>
+                        <div class="componente-card">
+                            <div class="componente-nome">👥 Conselho de Cultura</div>
+                            <div class="componente-status" id="status-conselho">-</div>
+                        </div>
+                        <div class="componente-card">
+                            <div class="componente-nome">🏛️ Órgão Gestor</div>
+                            <div class="componente-status" id="status-orgao">-</div>
+                        </div>
+                        <div class="componente-card">
+                            <div class="componente-nome">⚖️ Lei do Sistema</div>
+                            <div class="componente-status" id="status-lei">-</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="kpis-section">
                     <h2 class="section-title">📊 Indicadores Principais</h2>
                     <div class="kpis-grid">
@@ -1036,9 +1198,54 @@
 
             const dados = municipiosData.find(m => m.uf === estado && m.municipio.toLowerCase() === municipio.toLowerCase());
             if (dados) {
-                alert(`Município: ${dados.municipio}\nEstado: ${dados.uf}\nAdesão: ${dados.adesao}\nPlano: ${dados.plano}`);
+                // Preencher informações básicas
+                document.getElementById('relatorioMunicipio_nome').textContent = dados.municipio;
+                document.getElementById('relatorioMunicipio_uf').textContent = dados.uf;
+                document.getElementById('relatorioMunicipio_regiao').textContent = dados.regiao;
+                document.getElementById('relatorioMunicipio_adesao').textContent = dados.adesao;
+
+                // Função para obter classe CSS do status
+                function getStatusClass(status) {
+                    const statusLower = status.toLowerCase();
+                    if (statusLower.includes('concluída')) return 'status-concluida';
+                    if (statusLower.includes('não informado')) return 'status-nao-informado';
+                    if (statusLower.includes('arquivo incorreto')) return 'status-arquivo-incorreto';
+                    if (statusLower.includes('arquivo incompleto')) return 'status-arquivo-incompleto';
+                    if (statusLower.includes('avaliando')) return 'status-avaliando';
+                    if (statusLower.includes('em preenchimento')) return 'status-em-preenchimento';
+                    if (statusLower.includes('nao possui')) return 'status-nao-possui';
+                    return 'status-nao-informado';
+                }
+
+                // Preencher componentes
+                const planoEl = document.getElementById('status-plano');
+                planoEl.textContent = dados.plano;
+                planoEl.className = 'componente-status ' + getStatusClass(dados.plano);
+
+                const fundoEl = document.getElementById('status-fundo');
+                fundoEl.textContent = dados.fundo;
+                fundoEl.className = 'componente-status ' + getStatusClass(dados.fundo);
+
+                const conselhoEl = document.getElementById('status-conselho');
+                conselhoEl.textContent = dados.conselho;
+                conselhoEl.className = 'componente-status ' + getStatusClass(dados.conselho);
+
+                const orgaoEl = document.getElementById('status-orgao');
+                orgaoEl.textContent = dados.orgao;
+                orgaoEl.className = 'componente-status ' + getStatusClass(dados.orgao);
+
+                const leiEl = document.getElementById('status-lei');
+                leiEl.textContent = dados.lei_sistema;
+                leiEl.className = 'componente-status ' + getStatusClass(dados.lei_sistema);
+
+                // Mostrar o card de relatório
+                document.getElementById('relatorioMunicipio').classList.add('ativo');
+
+                // Scroll para o card
+                document.getElementById('relatorioMunicipio').scrollIntoView({ behavior: 'smooth', block: 'start' });
             } else {
                 alert('Município não encontrado');
+                document.getElementById('relatorioMunicipio').classList.remove('ativo');
             }
         }
 
