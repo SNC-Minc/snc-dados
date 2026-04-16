@@ -929,7 +929,9 @@
                         <select id="estadoSelect" onchange="atualizarMunicipios()">
                             <option value="">Selecione um Estado</option>
                         </select>
-                        <input type="text" id="municipioInput" placeholder="Digite o nome do município...">
+                        <select id="municipioInput">
+                            <option value="">Selecione um Município</option>
+                        </select>
                         <button onclick="buscarMunicipio()">🔍 Buscar</button>
                     </div>
                     <div id="municipiosList" style="display: none; margin-top: 15px;"></div>
@@ -1159,31 +1161,27 @@
 
         function atualizarMunicipios() {
             const estadoSelecionado = document.getElementById('estadoSelect').value;
-            const inputMunicipio = document.getElementById('municipioInput');
-            const lista = document.getElementById('municipiosList');
+            const selectMunicipio = document.getElementById('municipioInput');
+
+            // Limpar o select
+            selectMunicipio.innerHTML = '<option value="">Selecione um Município</option>';
 
             if (!estadoSelecionado) {
-                lista.style.display = 'none';
                 return;
             }
 
+            // Obter municípios do estado selecionado
             const municipios = municipiosData
                 .filter(m => m.uf === estadoSelecionado)
                 .map(m => m.municipio)
                 .sort();
 
-            inputMunicipio.value = '';
-            lista.innerHTML = '';
-            lista.style.display = 'block';
-
+            // Adicionar opções ao select
             municipios.forEach(mun => {
-                const div = document.createElement('div');
-                div.textContent = mun;
-                div.onclick = () => {
-                    inputMunicipio.value = mun;
-                    lista.style.display = 'none';
-                };
-                lista.appendChild(div);
+                const option = document.createElement('option');
+                option.value = mun;
+                option.textContent = mun;
+                selectMunicipio.appendChild(option);
             });
         }
 
