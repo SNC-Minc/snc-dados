@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SNC · Dashboard Executivo — Sistema Nacional de Cultura</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="map-tooltip" id="mapTooltip"></div>
+<div class="sidebar-tooltip" id="sidebarTooltip"></div>
+<div class="toast" id="toast"></div>
+
+<!-- ===================== MODAL: detalhe do município ===================== -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<div class="app-shell">
+
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark" style="background:none;border-radius:8px;overflow:hidden;width:44px;height:44px;padding:0;flex-shrink:0;">
+        <img src="data:image/png;base64,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" alt="Logo SNC" width="44" height="44" style="display:block;width:44px;height:44px;object-fit:contain;border-radius:6px;">
+      </div>
+      <div class="brand-text">
+        <div class="brand-title">SNC Dashboard</div>
+        <div class="brand-sub">Sistema Nacional de Cultura</div>
+      </div>
+    </div>
+
+    <div class="nav-group-label">Visão geral</div>
+    <ul class="nav-list">
+      <li class="nav-item active" data-view="dashboard">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.7"/></svg>
+        Dashboard
+      </li>
+      <li class="nav-item" data-view="estados">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 21V9l9-6 9 6v12" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 21v-7h6v7" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+        Estados
+      </li>
+      <li class="nav-item" data-view="municipios">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 21V8l6-4 6 4v13M16 21V11l4-2v12" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+        Municípios
+      </li>
+    </ul>
+
+    <div class="nav-group-label">Monitoramento</div>
+    <ul class="nav-list">
+      <li class="nav-item" data-view="adesoes">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 17l5-5 4 4 8-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 7h6v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Adesões
+      </li>
+      <li class="nav-item" data-view="componentes">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="1.7" stroke="currentColor" stroke-width="1.7"/><rect x="13" y="3" width="8" height="8" rx="1.7" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="13" width="8" height="8" rx="1.7" stroke="currentColor" stroke-width="1.7"/><rect x="13" y="13" width="8" height="8" rx="1.7" stroke="currentColor" stroke-width="1.7"/></svg>
+        Componentes
+      </li>
+      <li class="nav-item" data-view="fundo">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 7v10M9.5 9.3c0-1.3 1.1-2.3 2.5-2.3s2.5.9 2.5 2c0 1.3-1.1 1.7-2.5 2.2-1.4.5-2.5 1-2.5 2.3 0 1.1 1.1 2 2.5 2s2.5-.9 2.5-2.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        Fundo de Cultura
+      </li>
+      <li class="nav-item" data-view="planos">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M7 3h8l5 5v13H7V3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 3v5h5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 13h6M10 16h6M10 10h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        Plano de Cultura
+      </li>
+      <li class="nav-item" data-view="conselho">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Conselho
+      </li>
+    </ul>
+
+    <div class="nav-group-label">Saída</div>
+    <ul class="nav-list">
+      <li class="nav-item" data-view="relatorios">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M7 3h7l5 5v13H7V3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 12h5M10 16h5M10 8h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        Relatórios
+      </li>
+      <li class="nav-item" data-view="contatos">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.3" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M16 4.3c1.5.4 2.6 1.8 2.6 3.4s-1.1 3-2.6 3.4M19 13.4c1.7.6 3 2.2 3 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        Contatos
+      </li>
+      <li class="nav-item" data-view="config">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M19.4 13.5a1.7 1.7 0 00.3 1.9l.06.07a2 2 0 11-2.9 2.9l-.07-.06a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.55V20a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1-1.55 1.7 1.7 0 00-1.9.3l-.07.06a2 2 0 11-2.9-2.9l.06-.07a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.55-1H4a2 2 0 110-4h.1a1.7 1.7 0 001.55-1 1.7 1.7 0 00-.3-1.9l-.06-.07a2 2 0 112.9-2.9l.07.06a1.7 1.7 0 001.9.3H10A1.7 1.7 0 0011 4.6V4.5a2 2 0 114 0v.1a1.7 1.7 0 001 1.55 1.7 1.7 0 001.9-.3l.07-.06a2 2 0 112.9 2.9l-.06.07a1.7 1.7 0 00-.3 1.9V10a1.7 1.7 0 001.55 1H20a2 2 0 110 4h-.1a1.7 1.7 0 00-1.55 1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        Configurações
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      Iniciativa coordenada pelo SNC<br>
+      Criado pelo Chefe de Divisão Fagner Silva Ribeiro
+    </div>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="main">
+
+    <!-- ===================== TOPBAR ===================== -->
+    <header class="topbar">
+      <div class="topbar-title">
+        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Mostrar/recolher menu" title="Mostrar/recolher menu">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="topbar-controls" id="topbarControls">
+        <select class="select-control" id="ufFilter" autocomplete="off" aria-label="Filtrar por estado">
+          <option value="">Todos os estados</option>
+        </select>
+        <select class="select-control" id="regiaoFilter" autocomplete="off" aria-label="Filtrar por região">
+          <option value="">Todas as regiões</option>
+          <option value="Norte">Norte</option>
+          <option value="Nordeste">Nordeste</option>
+          <option value="Centro Oeste">Centro-Oeste</option>
+          <option value="Sudeste">Sudeste</option>
+          <option value="Sul">Sul</option>
+        </select>
+        <select class="select-control" id="adesaoFilter" autocomplete="off" aria-label="Filtrar por situação de adesão" title="Situação de adesão">
+          <option value="">Todos</option>
+          <option value="com">Com adesão</option>
+          <option value="plena">Adesão Plena</option>
+          <option value="provisoria">Adesão Provisória</option>
+          <option value="aguardando">Aguardando publicação no DOU</option>
+          <option value="semComponente">Aderidos sem nenhum componente</option>
+          <option value="sem">Sem adesão</option>
+        </select>
+        <div class="search-control" style="position:relative;">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input type="text" id="globalMunicipioFilter" placeholder="Filtrar município..." autocomplete="off" aria-label="Filtrar por município">
+          <div id="globalMunicipioSuggest" class="autocomplete-dropdown" style="display:none;"></div>
+        </div>
+        <select class="select-control" id="periodFilter" autocomplete="off" aria-label="Ano de adesão" title="Ano de adesão">
+          <option value="">Ano de adesão</option>
+        </select>
+        <label class="btn btn-secondary" for="fileUpload" style="white-space:nowrap;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0L7 9m5-5l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Carregar planilha
+        </label>
+        <input type="file" id="fileUpload" accept=".xls,.xlsx,.csv" aria-label="Carregar planilha de dados">
+        <button class="btn btn-secondary" id="btnRefresh" aria-label="Atualizar dados" style="flex-shrink:0;">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 12a9 9 0 0115.4-6.4L21 8M21 3v5h-5M21 12a9 9 0 01-15.4 6.4L3 16m0 5v-5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Atualizar dados
+        </button>
+        <button class="btn btn-secondary" id="btnLimparFiltros" style="display:none;color:var(--danger);border-color:var(--danger);flex-shrink:0;" aria-label="Limpar todos os filtros">
+          <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+          Limpar filtros
+        </button>
+      </div>
+    </header>
+
+    <!-- ===================== CONTENT ===================== -->
+    <div class="content" id="content">
+
+      <!-- ---------- DASHBOARD ---------- -->
+      <section class="view active" id="view-dashboard" aria-label="Dashboard Executivo" role="region">
+
+        <div class="grid grid-4 row-block" id="kpiRow"></div>
+        <div class="grid grid-4 row-block" id="kpiRow2"></div>
+        <div class="grid grid-2 row-block" id="kpiRow3"></div>
+        <div id="kpiSearchNote" style="display:none;font-size:12px;color:var(--muted);margin-top:-8px;margin-bottom:8px;padding:0 4px;">
+          Os cards acima respondem aos filtros de estado, região e ano — mas não ao campo de texto "Filtrar município", que afeta apenas a tabela de municípios.
+        </div>
+
+        <div class="grid grid-2 row-block">
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title">Evolução das adesões ao SNC</div>
+              <div class="card-tag">Por ano de adesão</div>
+            </div>
+            <div class="chart-wrap h-260"><canvas id="chartEvolucao"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title">Adesões por estado</div>
+              <div class="card-tag">Ranking UF</div>
+            </div>
+            <div class="chart-wrap h-260"><canvas id="chartEstados"></canvas></div>
+          </div>
+        </div>
+
+        <div class="grid grid-dashboard-row3 row-block">
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title">Componentes do SNC</div>
+              <div class="card-tag">Municípios aderidos</div>
+            </div>
+            <div class="chart-wrap h-220"><canvas id="chartComponentes"></canvas></div>
+          </div>
+        </div>
+
+        <div class="card row-block">
+          <div class="card-title-row">
+            <div class="card-title">Mapa do Brasil — índice de adesão por estado</div>
+            <div class="card-tag" id="mapClickHint">Clique em um estado para ver resumo</div>
+          </div>
+          <div class="map-wrap">
+            <div class="map-svg-holder"><svg id="brazilMap" viewBox="0 0 360 380" width="380"></svg></div>
+            <div class="map-scale">
+              <div style="font-size:11.5px;font-weight:700;color:var(--muted);margin-bottom:2px;">Percentual de adesão</div>
+              <div class="map-scale-row"><span class="map-scale-swatch" style="background:#0a6e3a"></span> Acima de 80%</div>
+              <div class="map-scale-row"><span class="map-scale-swatch" style="background:#3fae6b"></span> 60% a 80%</div>
+              <div class="map-scale-row"><span class="map-scale-swatch" style="background:#f2c94c"></span> 40% a 60%</div>
+              <div class="map-scale-row"><span class="map-scale-swatch" style="background:#f08c3a"></span> 20% a 40%</div>
+              <div class="map-scale-row"><span class="map-scale-swatch" style="background:#dc2626"></span> Abaixo de 20%</div>
+              <div id="mapStatePanel" style="margin-top:10px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-title-row row-block" style="margin-top:28px;">
+          <div class="section-title" style="margin:0;">Alertas e inteligência</div>
+        </div>
+        <div class="grid grid-3" id="alertsRow"></div>
+
+      </section>
+
+      <!-- ---------- ESTADOS ---------- -->
+      <section class="view" id="view-estados" aria-label="Estados — Painel por unidade federativa" role="region">
+        <!-- Painel de relatório do estado (aparece ao selecionar um estado) -->
+        <div id="estadoReportPanel" style="display:none;" class="row-block">
+          <div class="card" style="padding:0;overflow:hidden;">
+            <!-- Header do relatório -->
+            <div id="estadoReportHeader" style="background:#f5f5f7;color:#1d1d1f;padding:28px 32px 24px;border-bottom:1px solid #d2d2d7;"></div>
+            <!-- Corpo do relatório -->
+            <div id="estadoReportBody" style="padding:24px 32px 32px;"></div>
+          </div>
+        </div>
+
+        <div class="card row-block">
+          <div class="card-title-row">
+            <div class="card-title">Distribuição por estado</div>
+            <div class="card-tag" id="mapClickHintEstados">Clique em um estado para o relatório</div>
+          </div>
+          <div class="map-wrap">
+            <div class="map-svg-holder"><svg id="brazilMapEstados" viewBox="0 0 360 380" width="380"></svg></div>
+            <div class="map-scale">
+              <div style="font-size:11.5px;font-weight:700;color:var(--muted);margin-bottom:2px;">Percentual de adesão</div>
+              <div class="map-scale-row"><span class="map-scale-swatch" style="background:#0a6e3a"></span> Acima de 80%</div>
+              <div class="map-scale-row"><span class="map-scale-swatch" style="background:#3fae6b"></span> 60% a 80%</div>
+              <div class="map-scale-row"><span class="map-scale-swatch" style="background:#f2c94c"></span> 40% a 60%</div>
+              <div class="map-scale-row"><span class="map-scale-swatch" style="background:#f08c3a"></span> 20% a 40%</div>
+              <div class="map-scale-row"><span class="map-scale-swatch" style="background:#dc2626"></span> Abaixo de 20%</div>
+              <div id="mapStatePanelEstados" style="margin-top:10px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="table-toolbar">
+            <div class="card-title">Painel por unidade federativa</div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <select class="select-control" id="estadosSortKey" autocomplete="off" aria-label="Ordenar estados por" style="min-width:0;">
+                <option value="aderidos">Ordenar: Aderidos</option>
+                <option value="nome">Ordenar: Nome</option>
+                <option value="total">Ordenar: Municípios</option>
+                <option value="pct">Ordenar: % Adesão</option>
+                <option value="idxMedio">Ordenar: Índice médio</option>
+              </select>
+              <button class="btn-icon-sm" id="estadosSortDir" title="Inverter ordem">
+                <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M7 16V4M7 4L3 8M7 4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="search-control">
+                <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <input type="text" id="estadosSearch" placeholder="Pesquisar estado..." autocomplete="off">
+              </div>
+            </div>
+          </div>
+          <div id="estadosListContainer" class="estado-list"></div>
+        </div>
+      </section>
+
+      <!-- ---------- MUNICIPIOS ---------- -->
+      <section class="view" id="view-municipios" aria-label="Municípios — Tabela executiva" role="region">
+        <div class="card">
+          <div class="table-toolbar">
+            <div class="card-title">Tabela executiva de municípios</div>
+            <div class="search-control">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <input type="text" id="tableSearch" placeholder="Pesquisar município...">
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table class="data-table" id="tableMunicipios">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="pagination" id="paginationMunicipios"></div>
+        </div>
+      </section>
+
+      <!-- ---------- ADESOES ---------- -->
+      <section class="view" id="view-adesoes" aria-label="Adesões — Evolução histórica" role="region">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+          <select class="select-control" id="tipoAdesaoFilter" autocomplete="off" aria-label="Filtrar por tipo de adesão" title="Tipo de adesão">
+            <option value="">Tipos de adesões</option>
+            <option value="plena">Adesão Plena</option>
+            <option value="provisoria">Adesão Provisória</option>
+          </select>
+          <div style="display:flex;gap:8px;">
+          <button class="btn btn-secondary" id="btnImprimirAdesoes">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M6 9V3h12v6M6 18H4a1 1 0 01-1-1v-6a1 1 0 011-1h16a1 1 0 011 1v6a1 1 0 01-1 1h-2" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M6 14h12v7H6v-7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            Imprimir
+          </button>
+          <button class="btn btn-secondary" id="btnExportarAdesoes">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M7 3h7l5 5v13H7V3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 13h4M10 16h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            Exportar PDF
+          </button>
+          </div>
+        </div>
+        <div id="adesoesPrintArea">
+          <div class="grid grid-4 row-block" id="adesoesKpiRow"></div>
+          <div class="grid grid-2 row-block" id="adesoesTipoRow"></div>
+          <div class="card row-block">
+            <div class="card-title-row">
+              <div class="card-title">Evolução histórica das adesões</div>
+              <div class="card-tag">Acumulado por ano</div>
+            </div>
+            <div class="chart-wrap h-300"><canvas id="chartEvolucaoAdesoes"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title" id="tableRecentesTitle">Municípios</div>
+              <div class="card-tag" id="tableRecentesTag">Conforme os filtros ativos</div>
+            </div>
+            <div class="table-scroll">
+              <table class="data-table" id="tableRecentes">
+                <thead></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="pagination" id="paginationAdesoesTable" style="margin-top:14px;"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- COMPONENTES ---------- -->
+      <section class="view" id="view-componentes" aria-label="Componentes do SNC" role="region">
+        <div class="grid grid-2 row-block">
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title">Taxa de conclusão por componente</div>
+              <div class="card-tag">% sobre municípios aderidos</div>
+            </div>
+            <div class="chart-wrap h-300"><canvas id="chartComponentesDetalhe"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title">Distribuição do índice de maturidade</div>
+              <div class="card-tag">0 a 5 componentes concluídos</div>
+            </div>
+            <div class="chart-wrap h-300"><canvas id="chartDonut2"></canvas></div>
+            <div class="legend-row" id="donutLegend2"></div>
+          </div>
+        </div>
+        <div class="grid grid-5" id="componentCards"></div>
+      </section>
+
+      <!-- ---------- PLANOS ---------- -->
+      <section class="view" id="view-planos" aria-label="Planos de Cultura" role="region">
+        <div class="grid grid-4 row-block" id="planosKpiRow"></div>
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title">Periodicidade dos planos concluídos</div>
+            </div>
+            <div class="chart-wrap h-260"><canvas id="chartPeriodicidade"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title">Vigência dos planos por ano final</div>
+            </div>
+            <div class="chart-wrap h-260"><canvas id="chartVigencia"></canvas></div>
+          </div>
+        </div>
+        <div class="card row-block">
+          <div class="card-title-row">
+            <div class="card-title" id="tablePlanosTitle">Municípios</div>
+            <div class="card-tag" id="tablePlanosTag">Clique em um card acima para filtrar</div>
+          </div>
+          <div class="table-scroll">
+            <table class="data-table" id="tablePlanos">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="pagination" id="paginationPlanos" style="margin-top:14px;"></div>
+        </div>
+      </section>
+
+      <!-- ---------- FUNDO DE CULTURA ---------- -->
+      <section class="view" id="view-fundo" aria-label="Fundo de Cultura" role="region">
+        <div class="grid grid-4 row-block" id="fundoKpiRow"></div>
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title">Situação da Lei do Fundo de Cultura</div>
+            </div>
+            <div class="chart-wrap h-260"><canvas id="chartFundoStatus"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title">Fundos de Cultura criados por ano</div>
+            </div>
+            <div class="chart-wrap h-260"><canvas id="chartFundoAno"></canvas></div>
+          </div>
+        </div>
+        <div class="card row-block">
+          <div class="card-title-row">
+            <div class="card-title" id="tableFundoTitle">Municípios</div>
+            <div class="card-tag" id="tableFundoTag">Clique em um card acima para filtrar</div>
+          </div>
+          <div class="table-scroll">
+            <table class="data-table" id="tableFundo">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="pagination" id="paginationFundo" style="margin-top:14px;"></div>
+        </div>
+      </section>
+
+      <!-- ---------- CONSELHO ---------- -->
+      <section class="view" id="view-conselho" aria-label="Conselho de Política Cultural" role="region">
+        <div class="grid grid-4 row-block" id="conselhoKpiRow"></div>
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title">Situação da Lei do Conselho</div>
+            </div>
+            <div class="chart-wrap h-260"><canvas id="chartConselhoStatus"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title">Perfil do Conselho (entre os concluídos)</div>
+            </div>
+            <div class="chart-wrap h-260"><canvas id="chartConselhoNatureza"></canvas></div>
+          </div>
+        </div>
+        <div class="card row-block">
+          <div class="card-title-row">
+            <div class="card-title" id="tableConselhoTitle">Municípios</div>
+            <div class="card-tag" id="tableConselhoTag">Clique em um card acima para filtrar</div>
+          </div>
+          <div class="table-scroll">
+            <table class="data-table" id="tableConselho">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="pagination" id="paginationConselho" style="margin-top:14px;"></div>
+        </div>
+      </section>
+
+      <!-- ---------- RELATORIOS ---------- -->
+      <section class="view" id="view-relatorios" aria-label="Relatórios" role="region">
+        <div class="card row-block" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;">
+          <div>
+            <div class="card-title" style="font-size:15px;">Relatório Executivo do SNC</div>
+            <div style="font-size:12.3px;color:var(--muted);margin-top:3px;">Gera um resumo nacional completo na tela, com botões para imprimir ou exportar em PDF.</div>
+          </div>
+          <button class="btn btn-primary" id="btnGerarRelatorio">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/></svg>
+            Gerar Relatório Executivo
+          </button>
+        </div>
+
+        <div class="card row-block">
+          <div class="card-title" style="font-size:15px;margin-bottom:4px;">Relatórios Detalhados</div>
+          <div style="font-size:12.3px;color:var(--muted);margin-bottom:16px;">Relatório por município, relatório estratégico de um estado, ou checklist de adesão de todos os municípios de um estado.</div>
+          <div class="rep-form-row">
+            <div class="rep-form-field">
+              <label for="repTipo">Tipo de relatório</label>
+              <select class="select-control" id="repTipo" autocomplete="off">
+                <option value="institucionalizacao">Relatório Geral de Institucionalização</option>
+                <option value="municipio">Relatório de um Município</option>
+                <option value="estado">Relatório Estratégico do Estado</option>
+                <option value="checklist">Checklist de Municípios do Estado</option>
+                <option value="contatos">Lista de Contatos (Prefeito, Gestor, Cadastrador)</option>
+              </select>
+            </div>
+            <div class="rep-form-field" id="repEstadoWrap">
+              <label for="repEstado">Estado</label>
+              <select class="select-control" id="repEstado" autocomplete="off"><option value="">Selecione...</option></select>
+            </div>
+            <div class="rep-form-field" id="repMunicipioWrap">
+              <label for="repMunicipioInput">Município</label>
+              <div style="position:relative;">
+                <input type="text" id="repMunicipioInput" class="select-control" placeholder="Digite o nome do município..." autocomplete="off" style="width:100%;box-sizing:border-box;">
+                <select id="repMunicipio" style="display:none;" aria-label="Município selecionado"><option value="">Selecione o estado primeiro</option></select>
+                <div id="repMunicipioDropdown" style="display:none;position:absolute;z-index:200;top:100%;left:0;right:0;max-height:220px;overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);margin-top:4px;"></div>
+              </div>
+            </div>
+            <div class="rep-form-field" id="repFiltroWrap" style="display:none;">
+              <label for="repFiltroAdesao">Filtro de adesão</label>
+              <select class="select-control" id="repFiltroAdesao" autocomplete="off">
+                <option value="todos">Todos os municípios</option>
+                <option value="aderidos">Só com adesão</option>
+                <option value="naoAderidos">Só sem adesão</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="btnGerarRelatorioDetalhado">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/></svg>
+              Gerar Relatório
+            </button>
+          </div>
+        </div>
+
+        <div id="reportActionsBar" style="display:none;margin-bottom:12px;display:none;gap:8px;flex-wrap:wrap;align-items:center;">
+          <span style="font-size:12.5px;color:var(--muted);flex:1;">Relatório gerado com sucesso</span>
+          <button class="btn btn-secondary" id="btnImprimirRelatorio">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M6 9V3h12v6M6 18H4a1 1 0 01-1-1v-6a1 1 0 011-1h16a1 1 0 011 1v6a1 1 0 01-1 1h-2" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M6 14h12v7H6v-7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            Imprimir
+          </button>
+          <button class="btn btn-primary" id="btnExportarRelatorioDetalhado">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M7 3h7l5 5v13H7V3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 13h4M10 16h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            Exportar PDF
+          </button>
+        </div>
+        <div id="reportContainer"></div>
+      </section>
+
+      <!-- ---------- CONTATOS ---------- -->
+      <section class="view" id="view-contatos" aria-label="Contatos" role="region">
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-title" style="margin-bottom:4px;">Equipe do SNC</div>
+          <div style="font-size:12px;color:var(--muted);">Servidores do MinC / DSNC responsáveis por dar suporte aos municípios no processo de adesão ao SNC. Clique em alguém para ver os dados completos.</div>
+        </div>
+        <div id="contatosGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;"></div>
+      </section>
+
+      <!-- ---------- CONFIG ---------- -->
+      <section class="view" id="view-config" aria-label="Configurações" role="region">
+        <div class="card" style="max-width:640px;">
+          <div class="card-title" style="margin-bottom:4px;">Configurações</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Informações sobre a base atual e preferências de exibição.</div>
+          <div class="settings-item">
+            <div><div class="si-title">Fonte de dados ativa</div><div class="si-desc" id="cfgFonte">—</div></div>
+          </div>
+          <div class="settings-item">
+            <div><div class="si-title">Total de registros carregados</div><div class="si-desc" id="cfgTotal">—</div></div>
+          </div>
+          <div class="settings-item">
+            <div><div class="si-title">Mostrar rótulos no mapa</div><div class="si-desc">Exibe a sigla da UF sobre cada estado</div></div>
+            <div class="toggle on" id="toggleMapLabels"></div>
+          </div>
+          <div class="settings-item">
+            <div><div class="si-title">Linhas por página (tabela de municípios)</div><div class="si-desc">Quantidade de registros exibidos por página</div></div>
+            <select class="select-control" id="cfgPageSize" autocomplete="off" aria-label="Quantidade de linhas por página">
+              <option value="10">10</option>
+              <option value="25" selected>25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+          <div class="settings-item" style="flex-direction:column;align-items:flex-start;gap:12px;">
+            <div><div class="si-title">Tema visual</div><div class="si-desc">Escolha o esquema de cores do sistema</div></div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;" id="themeSelector">
+              <button class="theme-btn" data-theme="padrao" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:9999px;border:2px solid var(--accent);background:var(--surface);cursor:pointer;font-size:12px;font-weight:600;">
+                <span style="display:flex;gap:3px;"><span style="width:12px;height:12px;border-radius:50%;background:#0b1220;"></span><span style="width:12px;height:12px;border-radius:50%;background:#007aff;"></span></span>
+                Padrão
+              </button>
+              <button class="theme-btn" data-theme="brasil" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:9999px;border:2px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;font-weight:600;">
+                <span style="display:flex;gap:3px;"><span style="width:12px;height:12px;border-radius:50%;background:#1a3a2a;"></span><span style="width:12px;height:12px;border-radius:50%;background:#d4a017;"></span><span style="width:12px;height:12px;border-radius:50%;background:#003580;"></span></span>
+                Brasil
+              </button>
+              <button class="theme-btn" data-theme="governo" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:9999px;border:2px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;font-weight:600;">
+                <span style="display:flex;gap:3px;"><span style="width:12px;height:12px;border-radius:50%;background:#003580;"></span><span style="width:12px;height:12px;border-radius:50%;background:#1d8348;"></span><span style="width:12px;height:12px;border-radius:50%;background:#d4a017;"></span></span>
+                Governo Federal
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<script src="chart.umd.js"></script>
+<script src="xlsx.full.min.js"></script>
+<script src="html2pdf.bundle.min.js"></script>
+<script src="data.js"></script>
+<script src="contatos.js"></script>
+<script src="pnab-ciclo2.js"></script>
+<script src="lpg.js"></script>
+<script src="lpg-estados.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
